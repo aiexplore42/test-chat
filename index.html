@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wellness – Weight‑Watching AI Chat Demo</title>
+    <style>
+        /* ==== Soft teal brand palette ==== */
+        :root{
+            --primary:#00bfa5;               /* vibrant teal */
+            --primary-dark:#009688;          /* darker shade for hover */
+            --bg-instructions:#e0f7fa;
+            --bg-prompt:#f1fffd;
+            --bg-disclaimer:#fafafa;
+        }
+
+        /* ==== General layout ==== */
+        body{
+            font-family:Arial,Helvetica,sans-serif;
+            max-width:800px;
+            margin:2rem auto;
+            line-height:1.6;
+            color:#333;
+            padding:0 1rem;
+        }
+        h1{ text-align:center; margin-bottom:.5rem; }
+
+        /* ==== Instruction box ==== */
+        .instructions{
+            background:var(--bg-instructions);
+            border-left:6px solid var(--primary);
+            padding:1rem;
+            margin:1.5rem 0;
+        }
+        .instructions ol{margin-left:1.2rem;}
+
+        /* ==== Prompt boxes ==== */
+        .prompt{
+            background:var(--bg-prompt);
+            border-left:6px solid var(--primary);
+            padding:.9rem;
+            margin:.9rem 0;
+            position:relative;
+            white-space:pre-wrap;
+            transition:background .2s;
+        }
+        .prompt:hover{background:#c8f0e8;}
+        .prompt .copy-btn{
+            position:absolute;
+            top:6px;
+            right:6px;
+            background:var(--primary);
+            color:#fff;
+            border:none;
+            border-radius:3px;
+            padding:2px 6px;
+            font-size:.85rem;
+            cursor:pointer;
+        }
+        .prompt .copy-btn:hover{background:var(--primary-dark);}
+
+        /* ==== Chat button ==== */
+        .chat-btn{
+            display:block;
+            width:100%;
+            max-width:300px;
+            margin:1.5rem auto;
+            padding:.8rem 1.2rem;
+            background:var(--primary);
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            font-size:1.1rem;
+            text-align:center;
+            text-decoration:none;
+            cursor:pointer;
+        }
+        .chat-btn:hover{background:var(--primary-dark);}
+
+        /* ==== Footer & disclaimer ==== */
+        footer{
+            margin-top:2rem;
+            font-size:.85rem;
+            text-align:center;
+            color:#777;
+            line-height:1.4;
+        }
+        .disclaimer{
+            font-size:.78rem;
+            color:#555;
+            background:var(--bg-disclaimer);
+            border-left:4px solid #ff9900;
+            padding:.6rem;
+            margin:1rem 0;
+            display:inline-block;
+            text-align:left;
+            max-width:100%;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Wellness – Weight‑Watching AI Chat</h1>
+
+<div class="instructions">
+    <strong>How to use:</strong>
+    <ol>
+        <li>Read the short prompt below that matches the support you need.</li>
+        <li>Click the <strong>Copy</strong> button to copy that text.</li>
+        <li>Click the <strong>Free Chat</strong> button – it opens OpenAI’s free ChatGPT web UI.</li>
+        <li>Paste the copied text into the chat window and start a supportive conversation.</li>
+    </ol>
+</div>
+
+<!-- Prompt 1 – Goal‑setting & Planning -->
+<div class="prompt" id="p1">
+    <button class="copy-btn" onclick="copyPrompt('p1')">Copy</button>
+You are an upbeat wellness coach focused on healthy weight management. Help me set a clear, achievable weight‑watching goal for the next month.
+
+1. Ask me to pick ONE specific target (e.g., “walk 30 minutes five days a week” or “reduce nightly snacking to once”).  
+2. Turn that target into a SMART goal (Specific, Measurable, Achievable, Relevant, Time‑bound).  
+3. Suggest a simple daily routine that fits a busy schedule – include a warm‑up, the main activity, and a quick cool‑down.  
+4. Offer a tiny weekly reward I can give myself when I stick to the plan.  
+
+Keep the tone energetic and celebrate small wins.
+</div>
+
+<!-- Prompt 2 – Nutrition & Habits -->
+<div class="prompt" id="p2">
+    <button class="copy-btn" onclick="copyPrompt('p2')">Copy</button>
+You are a friendly nutrition guide who helps people watch their weight without strict dieting.
+
+1. Ask me what my typical breakfast, lunch, and dinner look like.  
+2. Recommend three easy swaps (e.g., “replace sugary soda with infused water”, “swap white rice for cauliflower rice”, “choose Greek yogurt instead of full‑fat”).  
+3. Suggest a quick “mindful bite” practice to help me notice hunger/fullness cues.  
+4. End with a short, positive affirmation I can repeat before meals.  
+
+Stay supportive and keep suggestions realistic for a beginner.
+</div>
+
+<!-- Prompt 3 – Motivation & Mindset -->
+<div class="prompt" id="p3">
+    <button class="copy-btn" onclick="copyPrompt('p3')">Copy</button>
+You are a compassionate motivation coach helping someone stuck in a weight‑watching slump.
+
+1. Begin by asking how I’m feeling right now and what’s been holding me back.  
+2. Reflect back my concerns with empathy, then point out a strength or past success I’ve mentioned.  
+3. Share a 30‑second “power‑pose” or breathing exercise I can do right now to raise energy.  
+4. Give me one ultra‑simple action I can complete within the next hour (e.g., “fill a water bottle”, “stretch for two minutes”).  
+5. Close with an encouraging mantra (“One step at a time, I’ve got this”).  
+
+Make the tone warm, uplifting, and action‑oriented.
+</div>
+
+<a href="https://chat.openai.com/" target="_blank" class="chat-btn">Free Chat (OpenAI)</a>
+
+<script>
+/**
+ * Copies only the prompt text (excludes the “Copy” button label).
+ * Shows a temporary “Copied!” label on the button for feedback.
+ */
+async function copyPrompt(id){
+    const container=document.getElementById(id);
+    const btn=container.querySelector('.copy-btn');
+    // Gather everything after the button
+    let txt='';
+    for(let node=btn.nextSibling; node; node=node.nextSibling){
+        if(node.nodeType===Node.TEXT_NODE) txt+=node.textContent;
+        else if(node.nodeType===Node.ELEMENT_NODE) txt+=node.innerText;
+    }
+    txt=txt.trim();
+    try{
+        await navigator.clipboard.writeText(txt);
+        flash(btn,'Copied!');
+    }catch(e){
+        fallbackCopy(txt,btn);
+    }
+}
+function flash(button,msg){
+    const original=button.textContent;
+    button.textContent=msg;
+    setTimeout(()=>{button.textContent=original;},1500);
+}
+function fallbackCopy(txt,btn){
+    const ta=document.createElement('textarea');
+    ta.value=txt;
+    ta.style.position='fixed';
+    ta.style.left='-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{
+        document.execCommand('copy');
+        flash(btn,'Copied!');
+    }catch(_){
+        alert('Copy failed – please select the text manually.');
+    }
+    document.body.removeChild(ta);
+}
+</script>
+
+<footer>
+    © 2026 <a href="https://fluxpulsconsulting.org">FLUXPULS</a> – Powered by OpenAI.
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> The AI replies are generated for experimental use only and may contain
+        inaccuracies, outdated information, or unintended bias. Do not rely on them for legal, medical,
+        financial, or safety‑critical decisions. Always verify important information with authoritative sources.
+    </div>
+    This page is for educational/demo purposes only.
+</footer>
+
+</body>
+</html>
